@@ -1,8 +1,23 @@
 package main
 
-import "fmt"
-
 func main() {
-	var card string = "Ace of spades"
-	fmt.Println(card)
+	//card := newCard()
+	//cards := deck{newCard(), newCard(), "King of Spades"}
+	//fmt.Println(card)
+	//fmt.Println(cards)
+	//
+	//fmt.Println("About to iterate")
+	//
+	////this is how we iterate
+	//for i, card := range cards {
+	//	fmt.Println(i, card)
+	//}
+	cards := newDeck()
+
+	// this is how we use a receiver
+	cards.print()
+}
+
+func newCard() string {
+	return "Five of Diamonds"
 }
