@@ -42,7 +42,7 @@ func (d deck) print() {
 in the above receiver, the `deck` variable is available in the function as a variable called `d`. Now every variable 
 of type `deck` can call the `print` function on itself. usually by convention the variable is 1 or 2 letters 
 starting with the same letter as the type. Thatt's why it's simply just `d`. notee the receiver is the part beefore 
-the function name.}
+the function name.
 j
 and you can call it on cards if it's of the typE:
 
@@ -51,3 +51,21 @@ cards := deck{newCard(), newCard(), "King of Spades"}
 ```
 
 inside the receiver, `d` is very similar to `this` or `self` in python or es6.
+- the receiver in a function allows you to call `receiver.method` in code.
+  
+- if `fruits[start: notIncludingIndex]`, then `fruits[0:2]` will give you 2 elements. This is the range syntax of 
+  slices. It can get you a subset of a slice.
+- you can return two values separate with a comma from a function.
+
+- type conversion in go is like this: `[]byte("Hi there")`. Useful for when we need to convert data to another type 
+  for a function that only accepts a certain type.
+  
+tthis is how to convert back to slice of strings:
+```go
+func (d deck) toString() string {
+    []string(d)
+}
+```
+in the above code, deck is a `[]string]` type anyway so this makes sense.
+
+- `error` is an actual type that can bee returnd.

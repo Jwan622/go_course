@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 func main() {
 	//card := newCard()
 	//cards := deck{newCard(), newCard(), "King of Spades"}
@@ -14,8 +16,13 @@ func main() {
 	//}
 	cards := newDeck()
 
+	hand, remainingCards := deal(cards, 5)
 	// this is how we use a receiver
-	cards.print()
+	hand.print()
+	remainingCards.print()
+	fmt.Println(cards.toString())
+
+	cards.saveToFile("my_cards")
 }
 
 func newCard() string {
