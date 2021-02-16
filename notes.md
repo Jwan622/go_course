@@ -69,3 +69,26 @@ func (d deck) toString() string {
 in the above code, deck is a `[]string]` type anyway so this makes sense.
 
 - `error` is an actual type that can bee returnd.
+
+```go
+func newDeckFromFile(filename string) deck {
+// no receiver since we don't have a deck. The reeturn type is a deck
+    bs, err := ioutil.ReadFile(filename)
+}
+```
+in above code, if everything goes correctly, `err` is nil. if there is an error while reading, `err` will be populated.
+- nil is a value in Go.
+
+- How to write Go tests? file neeeds to end in `_test` and the test itself needs to begin with `TestXXX` where the 
+  first X is capitalzed.
+- you can writ ea test like this using a formatted error string:
+
+```go
+func TestNewDeck(t *testing.T) {
+    testDeck := newDeck()
+    deckLength := 16
+    if len(testDeck) != deckLength {
+        t.Errorf("expected deck legnth of 16 but got %v", len(testDeck))
+    }
+}
+```

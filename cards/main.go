@@ -23,6 +23,15 @@ func main() {
 	fmt.Println(cards.toString())
 
 	cards.saveToFile("my_cards")
+
+	new_cards := newDeckFromFile("my_cards")
+	fmt.Println("about to print")
+	new_cards.print()
+
+	deck_to_shuffle := newDeckFromFile("my_cards")
+	deck_to_shuffle.shuffle()
+	fmt.Println("about to print shuffled deck...")
+	deck_to_shuffle.print()
 }
 
 func newCard() string {
