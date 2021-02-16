@@ -5,7 +5,7 @@
 - you can also just write `card := "Ace of spades"`. Equivalent to above syntax. specifically for strings. Go 
   compiled will figure it out. `:=` tells compiled to figure out the type.
 - When reassigning to a string, you don't need to do `:=` again.
-
+- we use `:=` when initializing, declaring, assigning in one step.
 ```go
 func newCard() string {
     return "Five of Diamonds"
@@ -91,4 +91,13 @@ func TestNewDeck(t *testing.T) {
         t.Errorf("expected deck legnth of 16 but got %v", len(testDeck))
     }
 }
+```
+
+## module 2
+- what is a struct? a data structure with related properties. Similar to a hash in Ruby or a dictionary in ES6. Go 
+  can use order for Struct when using a Struct or you can use keywords. You can do both!
+- this is a struct and how to use it:
+
+```go
+
 ```
