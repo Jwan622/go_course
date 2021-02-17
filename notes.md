@@ -100,4 +100,27 @@ func TestNewDeck(t *testing.T) {
 
 ```go
 
+type contactInfo struct {
+    email string
+    zipCode int
+}
+
+type person struct {
+    firstName string
+    lastName string
+    contactInfo
+}
+```
+we can have custom types and use it to define another custom type like above. Notice the shorthand for contactInfo Notice the shorthand for contactInfo
+you can create a person like this:
+
+```go
+jim := person{
+        firstName: "Jim",
+        lastName: "Wan",
+        contactInfo: contactInfo{
+        email: "someEmailForJim@gmail.com",
+        zipCode: 90210,
+        },
+    }
 ```
