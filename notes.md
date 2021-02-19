@@ -124,3 +124,136 @@ jim := person{
         },
     }
 ```
+
+- receivers can be structs too:
+
+```go
+type person struct {
+    firstName string
+    lastName string
+    contactInfo
+}
+
+func main() {
+// second way to deal with structs
+  jim := person{
+    firstName: "Jim",
+    lastName: "Wan",
+    contactInfo: contactInfo{
+    email: "someEmailForJim@gmail.com",
+    zipCode: 90210,
+    },
+
+  jim.print()
+}
+
+func (p person) print() {
+    fmt.Printf("%+v", p)
+}
+```
+in the above, jim a type person and so you can call these functions with a receiver of person.
+
+_pass by value_
+- go is a pass by value language meaning when we pass a struct to a funciton, a copy is made avaialble inside the 
+  function. 
+- go is a pass by value language. so when we pass a struct, go will copy all data inside the struct and place it at 
+  a new address in memory. it does not pass the same struct in memory. the argument in a function is a new struct, 
+  same vlaues, different memory location. so if you change a property in a struct in a function, it does not change 
+  the original struct. we're only updating the copy.
+```go
+    jim.updateName("jimmy")
+    jim.print()
+}
+
+func (p person) print() {
+    fmt.Printf("%+v", p)
+}
+
+func (p person) updateName(newFirstName string) {
+  p.firstName = newFirstName
+}
+```
+
+this fixes the problem:
+
+```go
+  jimPointer := &jim
+  jimPointer.updateName("jimmy")
+  jim.print()
+}
+
+func (p person) print() {
+  fmt.Printf("%+v", p)
+}
+
+func (pointerToPerson *person) updateName(newFirstName string) {
+  (*pointerToPerson).firstName = newFirstName
+}
+```
+
+so what do `&` and `*` operator do? `&` gives us the memory (RAM) address of the variable. so `jimPointer := &jim` 
+so jimPointer is no longer pointing to the struct, instead it's a reference to the memory address. `jimPointer` when 
+printed would be a memory address location.
+- the `*` operator gives us the value at that memory address. so in the function we see `*pointerToPerson`, that 
+  will return us the value at that `pointerToPerson` memory address. So that will give us the original struct and 
+  not a copy.
+- BUT a `*` in front of a type is different from a `*` in front of a pointer. when in front of a type like in `func 
+  (pointerToPerson *person)`, it means it can only be called with a pointer to a `type person`. But in the body, the 
+  `*pointerToPerson` is a value at that memory address.
+- So we turn address into value with `*address`.
+- We turn value into address with `&value`
+- But * in front of a type (like in the argument)  that means we're looking or a type that is a pointer to the 
+  specified type (in this case a person). It's not a value when you see `*type`, it just means a pointer to a value 
+  of that type. So if you see `func (pointerToPerson *person)` read this as a pointer that points to a person. it 
+  does not turn person into a value. It's called a `type description`, means we're working with a pointer to a type.
+  
+_shortcuts with pointers:_
+- if our function is defined like this:
+```go
+  func (pointerToPerson *person) updateName(newFirstName string) {
+```
+then that means we can call `updateName` with either a person or a pointer to person. So we can write:
+```go
+  jimPointer := &jim
+  jimPointer.updateName("jimmy")
+```
+or
+```go
+  jim.updateName("jimmy")
+```
+so if you have a variable `jim` that is just type person. but the receiver is of type pointer to person, you can still 
+use the person type when calling the receiver function. Go will automatically convert variable of type person to a 
+pointer to person for you.
+- if we define a receiver of type pointer to a type (say pereson), go will allow us to call the function either with 
+  a variable of type person or a pointer to a person.
+- this pass by value is true for structs, ints, and strings. for example, the below code prints "Bill":
+  
+```go
+import "fmt"
+
+func main() {
+  name := "Bill"
+  updateValue(name)
+  fmt.Println(name)
+}
+
+func updateValue(n string) {
+  n = "Alex"
+}
+```
+and does not print Alex because n in the function is a copied value.
+
+- big HOWEVER in go with pointers... if you pass a slice to af unction and modify it, it DOES modify the original 
+  slice even without the use of pointers. that is not how structs work. IF you pass a struct and the function 
+  modifies the struct, the original struct is untouched.j
+  
+- so remember that slices and grow and shrink unlike arrays which cannot be resized. When you create a slice in go, 
+  go is creating two separate data structures. the first is a slice with 3 elements (pointer to head, capacity, and 
+  length). capacity is how much the slice can hold. the length is the number of elements in the slice. The pointer 
+  points to underlying array with list of items. The array is at a separate address in memory. So when you pass a 
+  slice into a function, go still copies by vlaue... it does copy the slice and put it in another memory location, 
+  BUT it is still pointing to the underlying array (at another location). There are now two copies of the slice 
+  pointoing to the same location of the underlying array (0002).
+- What else behaves this way. Slcies are a refrence type because they refer to a data structure (array) in another 
+  location in memory. maps and channels are the same way. points and functions too. These are reference types. What 
+  are value types (when you have to use pointers)? They are ints, floats, structs, bools, and strings.
