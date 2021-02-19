@@ -35,5 +35,25 @@ func main() {
 	}
 
 	fmt.Println("")
+	fmt.Println("printing out struct")
 	fmt.Printf("%+v", jim)
+
+	// using function below, same as above but using a receiver
+	fmt.Println("")
+	fmt.Println("test code using pointers")
+	//jimPointer := &jim
+	//jimPointer.updateName("jimmy")
+	// these two are equivalent. instead of using explicit pointers, go converts the person type into a pointer because the argument is *person in updateName
+	jim.updateName("jimmy")
+	jim.print()
+}
+
+func (p person) print() {
+	fmt.Printf("%+v", p)
+}
+
+func (pointerToPerson *person) updateName(newFirstName string) {
+	// need to use a pointer here because go passes by value (and not by reference) so it'd be a copy of the value if we didn't use a pointer.
+	// then below we get the value at that pointer address
+	(*pointerToPerson).firstName = newFirstName
 }
