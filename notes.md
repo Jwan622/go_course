@@ -344,4 +344,18 @@ type <name> interface {
 - you cannot create an interface type but you can create a concrete type which is like a map or struct or int or englishBot which is of type struct, it extends a type struct.
 - interfaces are implicit in go, we do not have to explicitly say that our custom type satisfies an interface... it just has to have the methods implemented. we did not have to say englishBot is of type `bot`. Go takes care of the magic for us.
 - interfaces are not tests, they do not gaurantee a good implementation of the type. Go will not say that an error is made as long as the implementation is made. The return type can be wrong but as long as the implementation is made, Go will say it's satisfied. It's just a contract but the implementation can be wrong.
-- 
+
+- http interfaces:
+this code is not enough to get function body:
+
+```go
+func main() {
+  resp, err := http.Get("http://google.com")
+  if err != nil {
+    fmt.Println("Error", err)
+    os.Exit(1)
+  }
+
+  fmt.Println(resp)
+}
+```
