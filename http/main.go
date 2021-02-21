@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 )
@@ -13,5 +14,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println(resp)
+	//fmt.Println(resp)
+	//bs := make([]byte, 99999)
+	//resp.Body.Read(bs)
+	//fmt.Println(string(bs))
+
+	fmt.Println("DOING THIS A DIFF WAY USING IO.COPY ====================")
+	//a you can also do this to print out html to screen. copy implements the writer interface which can do the above code.
+	io.Copy(os.Stdout, resp.Body)
 }

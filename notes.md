@@ -344,7 +344,7 @@ type <name> interface {
 - you cannot create an interface type but you can create a concrete type which is like a map or struct or int or englishBot which is of type struct, it extends a type struct.
 - interfaces are implicit in go, we do not have to explicitly say that our custom type satisfies an interface... it just has to have the methods implemented. we did not have to say englishBot is of type `bot`. Go takes care of the magic for us.
 - interfaces are not tests, they do not gaurantee a good implementation of the type. Go will not say that an error is made as long as the implementation is made. The return type can be wrong but as long as the implementation is made, Go will say it's satisfied. It's just a contract but the implementation can be wrong.
-
+- interfaces allow us to reuse code. If you define an interface and have a function accept a type of that interface, all a passed in struct has to do is satisfy the interface.
 - http interfaces:
 this code is not enough to get function body:
 
@@ -359,3 +359,41 @@ func main() {
   fmt.Println(resp)
 }
 ```
+
+
+- interfaces can also implement other interfaces. Interfaces don't have to just implement functions but also other interfaces.
+
+- Tricky thing with responses is that they are of type `io.ReadCloser` which is an interface if you look at the go docs. so the field is of a type interface
+- Why is an interface a type in a struct? It says that the body field can have any value assigned to it as long as it fulfills the `io.ReadCloser` interface. So ify ou defined a struct with functions called `Read` and `Close` then you can assign it to a body field for the Response object.
+- you can assemble interfaces together to make another interface. If an interface has two interfaces, you have to satisfy both interfaces to satisfy the parent interface.
+
+- so why does the read function take in a byte slice and return an int? The int represents how many bytes were appended to the byte slice and the byte slice, since it's pass by reference and not value, will be mutated by the read function. The caller of the `Reader` interface which implements the `read` function needs to create a byte slice and pass it into the read function. The original byte slice is injected with data by the `read` method. documentation:
+
+```go
+Reader is the interface that wraps the basic Read method.
+
+Read reads up to len(p) bytes into p. It returns the number of bytes read (0 <= n <= len(p)) and any error encountered... 
+
+type Reader interface {
+    Read(p []byte) (n int, err error)
+}
+```
+- the read function does not resize the slice so you have to pass in an arbitrarily large byte slice.
+the code looks something like this:
+  
+```go
+resp, err := http.Get("<someUrl>")
+bs := make([]byte, 99999)
+resp.Body.Read(bs)
+```
+
+We can also use the writer interface:
+
+![writer](photos/writer.png)
+Below is the code that uses the writer interface. `io.Copy` takes in a writer and a reader. The byte slice for Writer is the input. So the `io.Copy` takes info from the resp.Body which implements the `Reader` interface and a `os.Stdout` implements the `Writer` interface. `os.Stdout` is of type `File` which implements the `Write` method so it's of type `Writer`.
+
+```go
+io.Copy(os.Stdout, resp.Body)
+```
+
+- So you can think of copy that reads in data from a Reader (outside our application) and writes it to some outside channel.
