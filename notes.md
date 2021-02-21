@@ -125,7 +125,7 @@ jim := person{
     }
 ```
 
-- receivers can be structs too:
+- **receivers can be structs too**:
 
 ```go
 type person struct {
@@ -221,11 +221,8 @@ or
 ```go
   jim.updateName("jimmy")
 ```
-so if you have a variable `jim` that is just type person. but the receiver is of type pointer to person, you can still 
-use the person type when calling the receiver function. Go will automatically convert variable of type person to a 
-pointer to person for you.
-- if we define a receiver of type pointer to a type (say pereson), go will allow us to call the function either with 
-  a variable of type person or a pointer to a person.
+so if you have a variable `jim` that is just type person. but the receiver is of type pointer to person, you can still use the person type when calling the receiver function. Go will automatically convert variable of type person to a  pointer to person for you.
+- if we define a receiver of type pointer to a type (say person), go will allow us to call the function either with a variable of type person or a pointer to a person.
 - this pass by value is true for structs, ints, and strings. for example, the below code prints "Bill":
   
 ```go
@@ -247,13 +244,104 @@ and does not print Alex because n in the function is a copied value.
   slice even without the use of pointers. that is not how structs work. IF you pass a struct and the function 
   modifies the struct, the original struct is untouched.j
   
-- so remember that slices and grow and shrink unlike arrays which cannot be resized. When you create a slice in go, 
-  go is creating two separate data structures. the first is a slice with 3 elements (pointer to head, capacity, and 
-  length). capacity is how much the slice can hold. the length is the number of elements in the slice. The pointer 
-  points to underlying array with list of items. The array is at a separate address in memory. So when you pass a 
-  slice into a function, go still copies by vlaue... it does copy the slice and put it in another memory location, 
-  BUT it is still pointing to the underlying array (at another location). There are now two copies of the slice 
-  pointoing to the same location of the underlying array (0002).
-- What else behaves this way. Slcies are a refrence type because they refer to a data structure (array) in another 
-  location in memory. maps and channels are the same way. points and functions too. These are reference types. What 
-  are value types (when you have to use pointers)? They are ints, floats, structs, bools, and strings.
+big catch... when you pass a slice to a function and mutate the slice... the original slice's values are changed. Even though with structs they do not. Why is this?
+- Let's first understand arrays and slices a bit more. remember that slices and grow and shrink unlike arrays which cannot be resized. When you create a slice in go, go is creating two separate data structures; the first is a slice with 3 elements (pointer to head, capacity, and length). capacity is how much the slice can hold. the length is the number of elements in the slice. And, the pointer points to underlying array with list of items. The array is at a separate address in memory. So when you pass a slice into a function, go still copies by value (original at 0001)... it does copy the slice and puts it in another memory location (say 0003), BUT it is still pointing to the underlying array (at another location say 0002). There are now two copies of the slice pointing to the same location of the underlying array (0002).
+- What else behaves this way. Slcies are a refrence type because they refer to a data structure (array) in another location in memory. maps and channels are the same way. points and functions too. These are reference types. What are value types (when you have to use pointers)? They are ints, floats, structs, bools, and strings.
+
+
+## Chapter 3: Maps
+- map keys must be of same time and map values must be of same time. The key adn maps don't have to be of the same type to each othet. need to delcare both the key and value type separately.j
+this is a map:
+  ```go
+	colors := map[string]string{
+		"red": "#ff0000",
+		"green": "#745someHex",
+  }
+  ```
+- other ways to declare map:
+```go
+  var colors map[string]string
+```
+
+```go
+  colors := make(map[string]string)
+```
+
+both are ways to declare maps to be manipulated and populated later. You cannot use dot notation with maps to add value. Have to use square braces. That's because map keys are typed and inside the braces we need to provide the appropriate typed value. You can use `delete` to delete keys and values off of a map. 
+
+- how to iterate through a map?
+
+```go
+
+for color, hex := range c {
+    fmt.Println("color:", color, "hex:", hex)
+}
+```
+
+- difference between map and struct? 
+- structs: you cannot iterate, it's a value type (passed by value and copied so mutations don't affect iteration in function calls), you need to know all different fields at compile time (need to list all the property names at compile), values can be of different types, keys do not support indexing
+- maps: you can iterate, passed by reference meaning a copy of the reference is passed to the function, you don't need to know all keys at compile time... you can add to it over the execution of the program.
+
+- quick thing with receivers, if you don't use it, you can omit the variable like this:
+
+```go
+func (spanishBot) printGreeting() string {
+    return "hola!"
+}
+```
+
+only the receiver type is present since the variable isn't used in the function.
+- you can't overload in Go, even if different argument types. This is not allowed:
+
+```go
+func printGreeting(eb englishBot) {
+  fmt.Println(eb.getGreeting())
+}
+
+func printGreeting(sb englishBot) {
+  fmt.Println(sb.getGreeting())
+}
+```
+
+- can we reduce two diff function with two different argument types into one? use interface
+```go
+
+type bot interface {
+  getGreeting() string
+}
+
+func printGreeting(b bot) {
+  fmt.Println(b.getGreeting())
+}
+```
+
+we still have two bots, englishbot and spanish bot each with own digferent implementation of getGreeting function:
+
+```go
+func (englishBot) getGreeting() string {
+  //very custom logic for english greeting, imagine
+  return "hi there"
+}
+
+func (spanishBot) getGreeting() string {
+  return "hola!"
+}
+```
+
+but there is an interface of `bot` which says a bot has a method of `getGreeting()` So if you have a method named `getGreeting()` and you return `string`, you can be a `bot` type. You can now call `printGreeting` with that bot. If a member has a method named `getGreeting()` that retunr string, it is promoted to type `bot`.
+- with interfaces I want to define methods and attributes that something as. As long as it satisfies that, it is of that interface type.
+an interface can list out both the argument adn return types:
+  
+```go
+type <name> interface {
+	<method>(int) string
+	<otherMethod>(int, string) (float,error)
+	<yetAnotherMethod>(user) string
+}
+```
+
+- int is the argument type and string is the return type above
+- you cannot create an interface type but you can create a concrete type which is like a map or struct or int or englishBot which is of type struct, it extends a type struct.
+- interfaces are implicit in go, we do not have to explicitly say that our custom type satisfies an interface... it just has to have the methods implemented. we did not have to say englishBot is of type `bot`. Go takes care of the magic for us.
+- interfaces are not tests, they do not gaurantee a good implementation of the type. Go will not say that an error is made as long as the implementation is made. The return type can be wrong but as long as the implementation is made, Go will say it's satisfied. It's just a contract but the implementation can be wrong.
+- 
