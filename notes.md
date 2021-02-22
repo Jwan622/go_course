@@ -1,4 +1,10 @@
 - go is a compiled language
+-  Though Go can be used as a functional programming language, it is an imperative programming language at heart. What’s the difference?
+
+A functional programming language does not allow you to change the state of a variable or a value once it has been created and initialized. This means variables and values are immutable, they can’t be changed. If you want to change the state of a variable or a value, you must make a copy and initialize the copy with the changes. Functions are always passed copies and return values are always copies too.
+
+In an imperative programming language we can create variables and values that are mutable, or can be changed. We can pass a pointer for any variable or value to a function, which in turn can change the state as necessary. A functional programming language wants you to think in terms of mathematical functions that take input and produce a result. In an imperative programming language we can build similar functions, but we can also build functions that perform operations on state that can exist anywhere in memory.
+
 - you can do string assigment like `var cards string = "Ace of Spades`
 - Java, Go, C++ are static typed langauges. We do care about values assigned to variables.
 
